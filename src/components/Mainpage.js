@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -9,15 +9,38 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Helpdrawer from "./helpdrawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
+import logo from "../logo.png"
 import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import LinearIndeterminate from "./Loading";
 import VmData from "./vmdata";
+import { Cookies } from 'react-cookie';
+import Typography from "@material-ui/core/Typography";
 
-
+const vmlist =
+    [
+        'HAL91',
+        'Oberon',
+        'OpenBSD 6.5 (Fvwm)',
+        'OPENSTEP 4.2',
+        'OS2 1.30 (Microsoft)',
+        'OS2-W4','ReactOS 0.4.9',
+        'sol-11_4-vbox',
+        'TrueOS 18.12 stable (Mate)',
+        'Unix System V R4',
+        'Win NT 3.51',
+        'Win NT 4 (clean)',
+        'WIN3.1 (SND, SVGA, NET)',
+        'Xenix 386 2.3.4q',
+        'CPM-86 1.1',
+        'DilOS',
+        'DOS_2.10',
+        'DOS_3.30 Win2',
+        'DOS_622-Win311',
+        'DR_DOS8'
+    ];
 function username() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
@@ -39,7 +62,7 @@ function fuehrendeNull(zahl) {
     zahl = (zahl < 10 ? '0' : '' )+ zahl;
     return zahl;
 }
-
+const cookies = new Cookies();
 const styles = props  => ({
     main: {
         flexGrow: 1
@@ -50,12 +73,22 @@ const styles = props  => ({
     title: {
         flexGrow: 1,
     },
+    toolbar: {
+        background: '#252525'
+    },
+    errormsg: {
+        color: 'red',
+        flexDirection: 'column',
+        alignItems: 'center',
+        display: 'flex',
+        marginBottom: '1em'
+    },
     select:{
         width:'100%',
         marginBottom: '2em'
     },
     paper: {
-        marginTop:'10em',
+        marginTop:'6em',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -78,47 +111,50 @@ class Mainpage extends React.Component {
         super(props);
         this.state = {
             done: false,
-            loading: false
+            loading: false,
+            vm: "",
+            remote: ""
         };
 
         this.handleChangeVM = this.handleChangeVM.bind(this);
         this.handleChangeRemote = this.handleChangeRemote.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
+        }
 
-     componentWillMount() {
-        console.log(sessionStorage.getItem('uservm'));
-        let session =  sessionStorage.getItem('uservm');
-        let resvm = sessionStorage.getItem('resvm');
+        componentDidMount() {
+         const cookies = new Cookies();
 
-        if (session == null){
+        let session =  cookies.get('sessioncookie');
+        let resvm = cookies.get('resvm');
+
+        if (session === undefined){
             let uservm =  username();
-            sessionStorage.setItem('uservm', uservm);
+            cookies.set('sessioncookie', uservm);
             this.setState({uservm: uservm})
         }
         else {
             this.setState({uservm: session})}
             console.log(this.state);
-            if (resvm !== null){
+            if (resvm !== undefined){
                 this.setState({done: true})
             }
 
         }
 
-    componentDidMount () {
-        this.setState({uservm: this.state.uservm})
-    }
-
     async handleSubmit () {
-        console.log(this.state);
-        let today = new Date();
-        sessionStorage.setItem('resvm', this.state.vm);
-        sessionStorage.setItem('time', uhrzeit());
-        sessionStorage.setItem('ip', "ip-address");
-        sessionStorage.setItem('remote', this.state.remote);
-        this.setState({loading:true});
-        await Sleep(3000);
-        this.setState({done: true, loading:false})
+            console.log(this.state)
+            if(this.state.vm ==="" || this.state.remote ===""){
+                this.setState({errormsg: "Bitte VM und Protokoll auswählen"})
+            }
+            else {
+            cookies.set('resvm', this.state.vm);
+            cookies.set('time', uhrzeit());
+            cookies.set('ip', "ip-address");
+            cookies.set('remote', this.state.remote);
+            this.setState({loading: true});
+            await Sleep(3000);
+            this.setState({done: true, loading: false})
+            }
     }
 
     handleChangeVM(event) {
@@ -137,10 +173,9 @@ class Mainpage extends React.Component {
         return (
             <div className={classes.main}>
                 <AppBar position="static">
-                    <Toolbar>
-                        <Typography variant="h6" className={classes.title}>
-                           VIRTUAL MUSEUM
-                        </Typography>{this.state.uservm}
+                    <Toolbar className={classes.toolbar}>
+                        <div className={classes.title}><img src={logo} width={'120em'} alt={"dynvirt"}/></div>
+                       <Typography variant={"button"}>{this.state.uservm}</Typography>
                     </Toolbar>
                 </AppBar>
             <Container component="main" maxWidth="xs" >
@@ -165,12 +200,9 @@ class Mainpage extends React.Component {
                                 onChange={this.handleChangeVM}
                                 displayEmpty
                             >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value={"Xenix"}>Xenix</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                {vmlist.map((vm, index) =>
+                                <MenuItem key={index} value={vm}>{vm}</MenuItem>
+                                )}
                             </Select>
                             <FormLabel component="legend">Verbindungsprotokoll</FormLabel>
                             <RadioGroup className={classes.select} aria-label="Remote Protocol" name="remote"
@@ -180,7 +212,7 @@ class Mainpage extends React.Component {
                                                   label="Virtual Network Computing (VNC)"/>
                             </RadioGroup>
 
-
+                            <Typography className={classes.errormsg}>{this.state.errormsg}</Typography>
                             <Button variant="outlined"
                                     className={classes.select}
                                     onClick={this.handleSubmit}

@@ -5,35 +5,39 @@ import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import { Cookies } from 'react-cookie';
+import Button from "@material-ui/core/Button";
 
 
 const styles = props => ({
     cocrPrimary: {
         backgroundColor: 'white',
     },
-    barColorPrimary: {
-        backgroundColor: '#e20074',
-    },
     element: {
         display: 'flex',
         justifyContent: 'center'
     }
 });
-
+const cookies = new Cookies();
+function deleteCookies(arr){
+    for (let i in arr){
+        cookies.remove(i)
+    }
+}
 class VmData extends React.Component {
     // eslint-disable-next-line no-undef
-
     constructor(props) {
+
         super(props);
         this.state = {
-            session: sessionStorage.getItem('uservm'),
-            vm: sessionStorage.getItem('resvm'),
-            time: sessionStorage.getItem('time'),
-            ip: sessionStorage.getItem('ip'),
-            remote: sessionStorage.getItem('remote'),
+            session: cookies.get('uservm'),
+            vm: cookies.get('resvm'),
+            time: cookies.get('time'),
+            ip: cookies.get('ip'),
+            remote: cookies.get('remote'),
             errorMessage: null,
             successMessage:null
 
@@ -42,7 +46,7 @@ class VmData extends React.Component {
 
 
     handleSubmit = event => {
-        sessionStorage.clear();
+        deleteCookies(cookies.getAll())
         window.location.reload(false);
     };
 
@@ -52,14 +56,14 @@ class VmData extends React.Component {
         return (
             <div>
                 <br/>
-                <Typography style={{display: 'flex', justifyContent: 'center'}} variant="h6" component="h4">
+                <Typography style={{display: 'flex', justifyContent: 'center'}} variant="h6" component="h5">
                     Session / Sitzung
                 </Typography>
-                <Typography style={{display: 'flex', justifyContent: 'center'}} variant="h6" component="h4">
+                <Typography style={{display: 'flex', justifyContent: 'center'}} variant="h6" component="h5">
                     {this.state.session}
                 </Typography>
 
-                <Grid style={{display: 'flex', justifyContent: 'center'}} container spacing={10}>
+                <Grid style={{display: 'flex', justifyContent: 'center'}} container spacing={4}>
                     <Grid item xs={12} md={12}>
                         <div className={classes.element}>
                             <List>
@@ -92,20 +96,22 @@ class VmData extends React.Component {
                     </Grid>
                 </Grid>
                 <Typography style={{display: 'flex', justifyContent: 'center'}}>{this.state.errorMessage}{this.state.successMessage}</Typography>
-                <ExpansionPanel>
-                    <ExpansionPanelSummary
+                <Accordion>
+                    <AccordionSummary
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                     >
                         <Typography className={classes.heading}>Einstellungen</Typography>
-                    </ExpansionPanelSummary>
+                    </AccordionSummary>
 
-                    <ExpansionPanelDetails>
-                            <button className={"sm"} onClick={this.handleSubmit}>
+                    <AccordionDetails>
+                            <Button
+                                variant="outlined"
+                                onClick={this.handleSubmit}>
                                 VM herunterfahren & löschen
-                            </button>
-                    </ExpansionPanelDetails>
-                </ExpansionPanel>
+                            </Button>
+                    </AccordionDetails>
+                </Accordion>
             </div>
 
         );
