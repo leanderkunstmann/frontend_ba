@@ -18,6 +18,9 @@ import LinearIndeterminate from "./Loading";
 import VmData from "./vmdata";
 import { Cookies } from 'react-cookie';
 import Typography from "@material-ui/core/Typography";
+const axios = require('axios');
+const cookies = new Cookies();
+
 
 const vmlist =
     [
@@ -62,7 +65,9 @@ function fuehrendeNull(zahl) {
     zahl = (zahl < 10 ? '0' : '' )+ zahl;
     return zahl;
 }
-const cookies = new Cookies();
+
+
+
 const styles = props  => ({
     main: {
         flexGrow: 1
@@ -151,7 +156,99 @@ class Mainpage extends React.Component {
             cookies.set('time', uhrzeit());
             cookies.set('ip', "ip-address");
             cookies.set('remote', this.state.remote);
+
+                let jsondata = {
+                    "apiVersion": "v1",
+                    "kind": "Pod",
+                    "metadata": {
+                        "name": cookies.get('sessioncookie')
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "image": "localhost:32000/vboximage",
+                                "name": "vboxcontainer",
+                                "ports": [
+                                    {
+                                        "containerPort": 3389
+                                    }
+                                ],
+                                "securityContext": {
+                                    "privileged": true
+                                },
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/dev/vboxdrv",
+                                        "name": "driver"
+                                    },
+                                    {
+                                        "mountPath": "/sys/fs/cgroup:ro",
+                                        "name": "cgroup"
+                                    },
+                                    {
+                                        "mountPath": "/tmp",
+                                        "name": "tmp"
+                                    },
+                                    {
+                                        "mountPath": "/machines",
+                                        "name": "machines"
+                                    }
+                                ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "driver",
+                                "hostPath": {
+                                    "path": "/dev/vboxdrv"
+                                }
+                            },
+                            {
+                                "name": "cgroup",
+                                "hostPath": {
+                                    "path": "/sys/fs/cgroup"
+                                }
+                            },
+                            {
+                                "name": "tmp",
+                                "hostPath": {
+                                    "path": "/tmp"
+                                }
+                            },
+                            {
+                                "name": "machines",
+                                "hostPath": {
+                                    "path": "~/machines"
+                                }
+                            }
+                        ]
+                    }
+                }
             this.setState({loading: true});
+                axios.post(
+                    'http://localhost:8080/api/v1/namespaces/default/pods',
+                    jsondata,
+                    {
+                        headers: {'Content-Type':'application/json'}})
+            .then(function (response) {
+                    console.log(response);
+                axios.get('http://localhost:8080/api/v1/namespaces/default/pods',{
+                    headers: {'Content-Type':'application/json'}})
+                .then(function(res)
+                {
+                    console.log(res.status.pod_ip);
+                                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+                })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+
+
+
+
             await Sleep(3000);
             this.setState({done: true, loading: false})
             }
