@@ -154,89 +154,80 @@ class Mainpage extends React.Component {
             else {
             cookies.set('resvm', this.state.vm);
             cookies.set('time', uhrzeit());
-            cookies.set('ip', "ip-address");
             cookies.set('remote', this.state.remote);
 
-                let jsondata = {
-                    "apiVersion": "v1",
-                    "kind": "Pod",
-                    "metadata": {
-                        "name": cookies.get('sessioncookie')
-                    },
-                    "spec": {
-                        "containers": [
-                            {
-                                "image": "localhost:32000/vboximage",
-                                "name": "vboxcontainer",
-                                "ports": [
-                                    {
-                                        "containerPort": 3389
+                let jsondata =
+                    {
+                        "apiVersion": "v1",
+                        "kind": "Pod",
+                        "metadata": {
+                            "name": cookies.get('sessioncookie')
+                        },
+                        "spec": {
+                            "containers": [
+                                {
+                                    "image": "localhost:32000/vboximage",
+                                    "name": "vboxcontainer",
+                                    "ports": [
+                                        {
+                                            "containerPort": 3389
+                                        }
+                                    ],
+                                    "securityContext": {
+                                        "privileged": true
+                                    },
+                                    "volumeMounts": [
+                                        {
+                                            "mountPath": "dev/vboxdrv",
+                                            "name": "driver"
+                                        },
+                                        {
+                                            "mountPath": "sys/fs/cgroup",
+                                            "name": "cgroup"
+                                        },
+                                        {
+                                            "mountPath": "machines",
+                                            "name": "machines"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "volumes": [
+                                {
+                                    "name": "driver",
+                                    "hostPath": {
+                                        "path": "/dev/vboxdrv"
                                     }
-                                ],
-                                "securityContext": {
-                                    "privileged": true
                                 },
-                                "volumeMounts": [
-                                    {
-                                        "mountPath": "/dev/vboxdrv",
-                                        "name": "driver"
-                                    },
-                                    {
-                                        "mountPath": "/sys/fs/cgroup:ro",
-                                        "name": "cgroup"
-                                    },
-                                    {
-                                        "mountPath": "/tmp",
-                                        "name": "tmp"
-                                    },
-                                    {
-                                        "mountPath": "/machines",
-                                        "name": "machines"
+                                {
+                                    "name": "cgroup",
+                                    "hostPath": {
+                                        "path": "/sys/fs/cgroup"
                                     }
-                                ]
-                            }
-                        ],
-                        "volumes": [
-                            {
-                                "name": "driver",
-                                "hostPath": {
-                                    "path": "/dev/vboxdrv"
+                                },
+                                {
+                                    "name": "machines",
+                                    "hostPath": {
+                                        "path": "/home/leander/machines"
+                                    }
                                 }
-                            },
-                            {
-                                "name": "cgroup",
-                                "hostPath": {
-                                    "path": "/sys/fs/cgroup"
-                                }
-                            },
-                            {
-                                "name": "tmp",
-                                "hostPath": {
-                                    "path": "/tmp"
-                                }
-                            },
-                            {
-                                "name": "machines",
-                                "hostPath": {
-                                    "path": "~/machines"
-                                }
-                            }
-                        ]
+                            ]
+                        }
                     }
-                }
             this.setState({loading: true});
                 axios.post(
                     'http://localhost:8080/api/v1/namespaces/default/pods',
                     jsondata,
                     {
                         headers: {'Content-Type':'application/json'}})
-            .then(function (response) {
+            .then(async function (response) {
+                await Sleep (2000)
                     console.log(response);
-                axios.get('http://localhost:8080/api/v1/namespaces/default/pods',{
+                axios.get('http://localhost:8080/api/v1/namespaces/default/pods/'+cookies.get('sessioncookie'),{
                     headers: {'Content-Type':'application/json'}})
                 .then(function(res)
                 {
-                    console.log(res.status.pod_ip);
+                    cookies.set('ip', res.data.status.podIP + ":3389");
                                     })
                     .catch(function (error) {
                         console.log(error);
@@ -283,7 +274,7 @@ class Mainpage extends React.Component {
                 :
                 this.state.done ?
                     <div className={classes.paper}>
-                        <VmData time={this.state.time} remote={this.state.remote} vm={this.state.vm} ip={"ip-address"}/>
+                        <VmData time={this.state.time} remote={this.state.remote} vm={this.state.vm} ip={cookies.get("ip")}/>
                     </div>
                     :
                     <div className={classes.paper}>
