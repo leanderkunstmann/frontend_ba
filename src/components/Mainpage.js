@@ -21,7 +21,6 @@ import Typography from "@material-ui/core/Typography";
 const axios = require('axios');
 const cookies = new Cookies();
 
-
 const vmlist =
     [
         'HAL91',
@@ -118,7 +117,7 @@ class Mainpage extends React.Component {
             done: false,
             loading: false,
             vm: "",
-            remote: ""
+            remote: "",
         };
 
         this.handleChangeVM = this.handleChangeVM.bind(this);
@@ -143,7 +142,7 @@ class Mainpage extends React.Component {
             if (resvm !== undefined){
                 this.setState({done: true})
             }
-
+            this.setState({ip:this.state.ip})
         }
 
     async handleSubmit () {
@@ -155,6 +154,7 @@ class Mainpage extends React.Component {
             cookies.set('resvm', this.state.vm);
             cookies.set('time', uhrzeit());
             cookies.set('remote', this.state.remote);
+
 
                 let jsondata =
                     {
@@ -168,6 +168,16 @@ class Mainpage extends React.Component {
                                 {
                                     "image": "localhost:32000/vboximage",
                                     "name": "vboxcontainer",
+                                    "env": [
+                                        {
+                                            "name": "vmname",
+                                            "value": cookies.get('resvm')
+                                        },
+                                        {
+                                            "name": "remote",
+                                            "value": cookies.get('remote')
+                                        }
+                                    ],
                                     "ports": [
                                         {
                                             "containerPort": 3389
@@ -214,22 +224,39 @@ class Mainpage extends React.Component {
                             ]
                         }
                     }
+
+
             this.setState({loading: true});
-                axios.post(
+                await axios.post(
                     'http://localhost:8080/api/v1/namespaces/default/pods',
                     jsondata,
                     {
                         headers: {'Content-Type':'application/json'}})
             .then(async function (response) {
-                await Sleep (2000)
+                await Sleep (10000)
                     console.log(response);
                 axios.get('http://localhost:8080/api/v1/namespaces/default/pods/'+cookies.get('sessioncookie'),{
                     headers: {'Content-Type':'application/json'}})
-                .then(function(res)
+                .then(async function(res)
                 {
+                    await Sleep(3500)
                     cookies.set('ip', res.data.status.podIP + ":3389");
+                    this.setState({ip:res.data.status.podIP})
+                    console.log(res);
                                     })
-                    .catch(function (error) {
+                //et wsurl = 'ws://localhost:8080/api/v1/namespaces/default/pods/'+cookies.get('sessioncookie')+'/exec?command=echo&command=foo&stderr=true&stdout=true'
+                    //'command=.%2Frun.sh&stderr=true&stdout=true'
+                //"ws://localhost:8080/api/v1/namespaces/default/pods/ehvr4f6m1xqrfgjdvmvz/exec?container=vboxcontainer&stdin=1&stdout=1&stderr=1&tty=1&command=%2Fbin%2Fbash"
+
+                //let sock = new WebSocket(wsurl);
+                //sock.onopen = () => {
+                    // on connecting, do nothing but log it to the console
+                   // console.log('connected'}
+                //sock.onclose = function (event) { console.log('close')}
+
+
+
+            .catch(function (error) {
                         console.log(error);
                     })
                 })
@@ -241,8 +268,9 @@ class Mainpage extends React.Component {
 
 
             await Sleep(3000);
-            this.setState({done: true, loading: false})
+            this.setState({done: true, loading: false,ip: cookies.get('ip')})
             }
+            this.setState({ip: this.state.ip})
     }
 
     handleChangeVM(event) {
@@ -258,6 +286,7 @@ class Mainpage extends React.Component {
 
     render() {
         const {classes} = this.props;
+        const data = this.state;
         return (
             <div className={classes.main}>
                 <AppBar position="static">
@@ -274,7 +303,7 @@ class Mainpage extends React.Component {
                 :
                 this.state.done ?
                     <div className={classes.paper}>
-                        <VmData time={this.state.time} remote={this.state.remote} vm={this.state.vm} ip={cookies.get("ip")}/>
+                        <VmData time={this.state.time} remote={this.state.remote} vm={this.state.vm} ip={this.state.ip}/>
                     </div>
                     :
                     <div className={classes.paper}>
