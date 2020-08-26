@@ -108,7 +108,7 @@ const styles = props  => ({
         margin: '100em',
     },
 });
-
+let remotetext;
 class Mainpage extends React.Component {
 
     constructor(props) {
@@ -126,7 +126,7 @@ class Mainpage extends React.Component {
         }
 
         componentDidMount() {
-         const cookies = new Cookies();
+        const cookies = new Cookies();
 
         let session =  cookies.get('sessioncookie');
         let resvm = cookies.get('resvm');
@@ -134,15 +134,14 @@ class Mainpage extends React.Component {
         if (session === undefined){
             let uservm =  username();
             cookies.set('sessioncookie', uservm);
-            this.setState({uservm: uservm})
+            this.setState({session: uservm})
         }
         else {
             this.setState({uservm: session})}
             console.log(this.state);
             if (resvm !== undefined){
-                this.setState({done: true})
+                this.setState({done: true, ip: cookies.get('ip'), remote: cookies.get('remote')})
             }
-            this.setState({ip:this.state.ip})
         }
 
     async handleSubmit () {
@@ -232,16 +231,21 @@ class Mainpage extends React.Component {
                     jsondata,
                     {
                         headers: {'Content-Type':'application/json'}})
-            .then(async function (response) {
+            .then(async (response) => {
                 await Sleep (10000)
                     console.log(response);
                 axios.get('http://localhost:8080/api/v1/namespaces/default/pods/'+cookies.get('sessioncookie'),{
                     headers: {'Content-Type':'application/json'}})
-                .then(async function(res)
+                .then(async (res) =>
                 {
-                    await Sleep(3500)
                     cookies.set('ip', res.data.status.podIP + ":3389");
-                    this.setState({ip:res.data.status.podIP})
+                    if (this.state.remote ===  "Oracle VM VirtualBox Extension Pack") {
+                        remotetext = "RDP"
+                        cookies.set ('remote', remotetext)
+                    }
+                    else {remotetext = this.state.remote}
+                    this.setState({ip:res.data.status.podIP, remote: remotetext})
+                    this.setState(this.state)
                     console.log(res);
                                     })
                 //et wsurl = 'ws://localhost:8080/api/v1/namespaces/default/pods/'+cookies.get('sessioncookie')+'/exec?command=echo&command=foo&stderr=true&stdout=true'
@@ -285,14 +289,15 @@ class Mainpage extends React.Component {
 
 
     render() {
+        console.log(this.state);
         const {classes} = this.props;
-        const data = this.state;
+
         return (
             <div className={classes.main}>
                 <AppBar position="static">
                     <Toolbar className={classes.toolbar}>
                         <div className={classes.title}><img src={logo} width={'120em'} alt={"dynvirt"}/></div>
-                       <Typography variant={"button"}>{this.state.uservm}</Typography>
+                       <Typography variant={"button"}>{this.state.session}</Typography>
                     </Toolbar>
                 </AppBar>
             <Container component="main" maxWidth="xs" >
@@ -303,7 +308,7 @@ class Mainpage extends React.Component {
                 :
                 this.state.done ?
                     <div className={classes.paper}>
-                        <VmData time={this.state.time} remote={this.state.remote} vm={this.state.vm} ip={this.state.ip}/>
+                        <VmData time={this.state.time} remote={remotetext} vm={this.state.vm} ip={this.state.ip}/>
                     </div>
                     :
                     <div className={classes.paper}>
@@ -324,7 +329,7 @@ class Mainpage extends React.Component {
                             <FormLabel component="legend">Verbindungsprotokoll</FormLabel>
                             <RadioGroup className={classes.select} aria-label="Remote Protocol" name="remote"
                                         value={this.state.remote} onChange={this.handleChangeRemote}>
-                                <FormControlLabel value="RDP" control={<Radio/>} label="Remote Desktop Protocol (RDP)"/>
+                                <FormControlLabel value="Oracle VM VirtualBox Extension Pack" control={<Radio/>} label="Remote Desktop Protocol (RDP)"/>
                                 <FormControlLabel value="VNC" control={<Radio/>}
                                                   label="Virtual Network Computing (VNC)"/>
                             </RadioGroup>
