@@ -21,9 +21,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5985657c-f933-46c6-bd81-2e1448651a70" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.test.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Root.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Root.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Mainpage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/vmdata.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/vmdata.js" afterDir="false" />
     </list>
@@ -117,7 +114,8 @@
       <workItem from="1598200463458" duration="1931000" />
       <workItem from="1598369001426" duration="15219000" />
       <workItem from="1598398047423" duration="2408000" />
-      <workItem from="1598430904475" duration="9333000" />
+      <workItem from="1598430904475" duration="10262000" />
+      <workItem from="1598535927179" duration="4022000" />
     </task>
     <task id="LOCAL-00001" summary="first version with session storage">
       <created>1598102220183</created>
@@ -142,6 +140,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first version with session storage" />

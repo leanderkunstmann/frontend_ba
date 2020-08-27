@@ -13,6 +13,27 @@ import Button from "@material-ui/core/Button";
 import LinearIndeterminate from "./Loading";
 const axios = require('axios');
 
+const vm_info = [
+            ['HAL91', 'Username','Passwort','tooltip'],
+            ['Oberon', 'Username','Passwort','tooltip'],
+            ['OpenBSD 6.5 (Fvwm)','Username','Passwort','tooltip'],
+            ['OPENSTEP 4.2','Username','Passwort','tooltip'],
+            ['OS2 1.30 (Microsoft)','Username','Passwort','tooltip'],
+            ['OS2-W4','ReactOS 0.4.9','Username','Passwort','tooltip'],
+            ['sol-11_4-vbox','Username','Passwort','tooltip'],
+            ['TrueOS 18.12 stable (Mate)','root','TRUEtoor','tooltip'],
+            ['Unix System V R4','Username','Passwort','tooltip'],
+            ['Win NT 3.51','Username','Passwort','tooltip'],
+            ['Win NT 4 (clean)','Administrator','admin','tooltip'],
+            ['WIN3.1 (SND, SVGA, NET)','Administrator','admin','tooltip'],
+            ['Xenix 386 2.3.4q','Username','Passwort','tooltip'],
+            ['CPM-86 1.1','Username','Passwort','tooltip'],
+            ['DilOS','Username','Passwort','tooltip'],
+            ['DOS_2.10','Username','Passwort','tooltip'],
+            ['DOS_3.30 Win2','Username','Passwort','tooltip'],
+            ['DOS_622-Win311','Username','Passwort','tooltip'],
+            ['DR_DOS8','Username','Passwort','tooltip'],
+        ];
 
 const styles = props => ({
     positive: {
@@ -45,6 +66,9 @@ class VmData extends React.Component {
             remote: cookies.get('remote'),
             errorMessage: null,
             successMessage:null,
+            uname: "",
+            pname: "",
+            tooltip: "",
             loading: false
 
         };
@@ -82,6 +106,9 @@ class VmData extends React.Component {
             .then()
     }
 
+    componentDidMount() {
+    }
+
     async handleStatus () {
         await axios.get('http://localhost:8080/api/v1/namespaces/default/pods/' + this.state.session)
             .then(async (response) => {
@@ -97,7 +124,13 @@ class VmData extends React.Component {
     }
 
     render() {
-
+        let vm_info_specified = []
+        for (let i of vm_info) {
+            if (i[0] === this.state.vm)
+                console.log('match')
+            vm_info_specified.push(i[1],i[2],i[3])
+        }
+        console.log(this.state)
         const {classes} = this.props;
         return (
 
@@ -129,8 +162,8 @@ class VmData extends React.Component {
                                 </ListItem>
                                 <ListItem>
                                     <ListItemText
-                                        primary={this.state.time}
-                                        secondary='Timestamp'
+                                        primary={vm_info_specified[0] + ' / ' + vm_info_specified[1]}
+                                        secondary='Username / Passwort'
                                     />
                                 </ListItem>
                                 <ListItem>
@@ -158,19 +191,20 @@ class VmData extends React.Component {
                         <div className={classes.element}>
                             <List>
                                 <ListItem>
+
                                     <Button
                                         className={classes.element}
                                         variant="outlined"
-                                        onClick={this.handleSubmit}>
-                                        Sitzung beenden und löschen
+                                        onClick={this.handleStatus}>
+                                        Status der Instanz prüfen
                                     </Button>
                                 </ListItem>
                                 <ListItem>
                                     <Button
                                         className={classes.element}
                                         variant="outlined"
-                                        onClick={this.handleStatus}>
-                                        Status der Instanz prüfen
+                                        onClick={this.handleSubmit}>
+                                        Virtuelles OS beenden
                                     </Button>
                                 </ListItem>
                             </List>

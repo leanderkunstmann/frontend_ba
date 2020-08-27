@@ -66,7 +66,6 @@ function fuehrendeNull(zahl) {
 }
 
 
-
 const styles = props  => ({
     main: {
         flexGrow: 1
@@ -243,7 +242,12 @@ class Mainpage extends React.Component {
                         remotetext = "RDP"
                         cookies.set ('remote', remotetext)
                     }
-                    else {remotetext = this.state.remote}
+                    else {
+                        remotetext = this.state.remote + ' (Password = secret)';
+                        cookies.set ('remote', remotetext)
+
+                    }
+
                     this.setState({ip:res.data.status.podIP, remote: remotetext})
                     this.setState(this.state)
                     console.log(res);
@@ -297,7 +301,7 @@ class Mainpage extends React.Component {
                 <AppBar position="static">
                     <Toolbar className={classes.toolbar}>
                         <div className={classes.title}><img src={logo} width={'120em'} alt={"dynvirt"}/></div>
-                       <Typography variant={"button"}>{this.state.session}</Typography>
+                       <Typography variant={"subtitle"}>{'version 0.3 alpha'}</Typography>
                     </Toolbar>
                 </AppBar>
             <Container component="main" maxWidth="xs" >
