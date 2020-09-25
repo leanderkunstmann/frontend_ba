@@ -34,7 +34,7 @@ export default vm_info;
 //win nt 4 mit rdp perfekt, vnc web trash, nur normales vnc
 //win 3.1 network delete
 //cpm nice
-//dos 3 mouse
+//dos 3 mousenp
 //
 //
 //

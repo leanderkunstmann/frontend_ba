@@ -175,7 +175,12 @@ class Mainpage extends React.Component {
                                             ],
                                             "ports": [
                                                 {
-                                                    "containerPort": 5091,
+                                                    "containerPort": 5901,
+                                                    "name": "webservice"
+                                                },
+                                                {
+                                                    "containerPort": 3389,
+                                                    "name": "remote"
                                                 }
                                             ],
                                             "securityContext": {
@@ -222,7 +227,26 @@ class Mainpage extends React.Component {
                         }
                     }
 
-
+                let jsonservice ={
+                    "apiVersion": "v1",
+                    "kind": "Service",
+                    "metadata": {
+                        "name": cookies.get('sessioncookie') +"service"
+                    },
+                    "spec": {
+                        "type": "NodePort",
+                        "selector": {
+                            "app": cookies.get('sessioncookie')
+                        },
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 81,
+                                "targetPort": 5901
+                            }
+                        ]
+                    }
+                }
 
             this.setState({loading: true});
                 await axios.post(
@@ -233,11 +257,20 @@ class Mainpage extends React.Component {
             .then(async (response) => {
                 await Sleep (10000)
                     console.log(response);
-                axios.get('http://localhost:8080/api/v1/namespaces/default/pods/'+cookies.get('sessioncookie'),{
+                axios.get('http://localhost:8080/apis/apps/v1/namespaces/default/deployments/'+cookies.get('sessioncookie'),{
                     headers: {'Content-Type':'application/json'}})
                 .then(async (res) =>
                 {
                     cookies.set('ip', res.data.status.podIP);
+                    axios.post('http://localhost:8080/api/v1/namespaces/default/services',
+                        jsonservice,
+                        {
+                            headers: {'Content-Type':'application/json'}})
+                        .then(async (res) =>
+                        {console.log(res)})
+                        .catch(function (error) {
+                            console.log(error);
+                        })
                     if (this.state.remote ===  "Oracle VM VirtualBox Extension Pack") {
                         remotetext = "RDP"
                         cookies.set ('remote', remotetext)
@@ -360,3 +393,17 @@ class Mainpage extends React.Component {
 }
 
 export default withStyles(styles)(Mainpage);
+
+//apiVersion: v1
+// kind: Service
+// metadata:
+//   name: my-service
+// spec:
+//   selector:
+//     app: cookies.get('sessioncookie')
+//   ports:
+//     - protocol: TCP
+//       port: 81
+//       targetPort: 5091
+
+// get all services, take newest, add port +1
