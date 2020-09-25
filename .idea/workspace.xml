@@ -20,6 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5985657c-f933-46c6-bd81-2e1448651a70" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/components/vminfo.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Mainpage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/vmdata.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/vmdata.js" afterDir="false" />
@@ -75,6 +76,17 @@
     </key>
   </component>
   <component name="RunManager" selected="npm.npm start">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:3000">
       <method v="2" />
     </configuration>
@@ -115,7 +127,12 @@
       <workItem from="1598369001426" duration="15219000" />
       <workItem from="1598398047423" duration="2408000" />
       <workItem from="1598430904475" duration="10262000" />
-      <workItem from="1598535927179" duration="4022000" />
+      <workItem from="1598535927179" duration="4790000" />
+      <workItem from="1600606926615" duration="1419000" />
+      <workItem from="1600621382550" duration="4303000" />
+      <workItem from="1600632935073" duration="1205000" />
+      <workItem from="1601038254002" duration="237000" />
+      <workItem from="1601042896034" duration="2255000" />
     </task>
     <task id="LOCAL-00001" summary="first version with session storage">
       <created>1598102220183</created>
@@ -163,10 +180,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="585" y="114" key="CommitChangelistDialog2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1598102219677" />
-    <state x="738" y="279" width="424" height="520" key="FileChooserDialogImpl" timestamp="1598383111715">
+    <state x="738" y="279" width="424" height="520" key="FileChooserDialogImpl" timestamp="1600622807493">
       <screen x="0" y="27" width="1920" height="985" />
     </state>
-    <state x="738" y="279" width="424" height="520" key="FileChooserDialogImpl/0.27.1920.985@0.27.1920.985" timestamp="1598383111715" />
+    <state x="738" y="279" width="424" height="520" key="FileChooserDialogImpl/0.27.1920.985@0.27.1920.985" timestamp="1600622807493" />
     <state x="769" y="436" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1598101901016">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -175,9 +192,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="616" y="240" key="run.anything.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1598095089105" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1598094837407">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="623" y="240" width="672" height="643" key="search.everywhere.popup" timestamp="1598540768233">
+      <screen x="0" y="27" width="1920" height="985" />
     </state>
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1598094837407" />
+    <state x="623" y="240" width="672" height="643" key="search.everywhere.popup/0.27.1920.985@0.27.1920.985" timestamp="1598540768233" />
   </component>
 </project>

@@ -1,4 +1,5 @@
 import React from 'react'
+import vm_info from "./vminfo";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -19,30 +20,9 @@ import VmData from "./vmdata";
 import { Cookies } from 'react-cookie';
 import Typography from "@material-ui/core/Typography";
 const axios = require('axios');
+
 const cookies = new Cookies();
 
-const vmlist =
-    [
-        'HAL91',
-        'Oberon',
-        'OpenBSD 6.5 (Fvwm)',
-        'OPENSTEP 4.2',
-        'OS2 1.30 (Microsoft)',
-        'OS2-W4','ReactOS 0.4.9',
-        'sol-11_4-vbox',
-        'TrueOS 18.12 stable (Mate)',
-        'Unix System V R4',
-        'Win NT 3.51',
-        'Win NT 4 (clean)',
-        'WIN3.1 (SND, SVGA, NET)',
-        'Xenix 386 2.3.4q',
-        'CPM-86 1.1',
-        'DilOS',
-        'DOS_2.10',
-        'DOS_3.30 Win2',
-        'DOS_622-Win311',
-        'DR_DOS8'
-    ];
 function username() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
@@ -155,78 +135,98 @@ class Mainpage extends React.Component {
 
 
                 let jsondata =
+
                     {
-                        "apiVersion": "v1",
-                        "kind": "Pod",
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
                         "metadata": {
-                            "name": cookies.get('sessioncookie')
+                            "name": cookies.get('sessioncookie'),
+                            "labels": {
+                                "app": cookies.get('sessioncookie')
+                            }
                         },
                         "spec": {
-                            "containers": [
-                                {
-                                    "image": "localhost:32000/vboximage",
-                                    "name": "vboxcontainer",
-                                    "env": [
+                            "replicas": 1,
+                            "selector": {
+                                "matchLabels": {
+                                    "app": cookies.get('sessioncookie')
+                                }
+                            },
+                            "template": {
+                                "metadata": {
+                                    "labels": {
+                                        "app": cookies.get('sessioncookie')
+                                    }
+                                },
+                                "spec": {
+                                    "containers": [
                                         {
-                                            "name": "vmname",
-                                            "value": cookies.get('resvm')
-                                        },
-                                        {
-                                            "name": "remote",
-                                            "value": cookies.get('remote')
+                                            "image": "localhost:32000/vboximage:latest",
+                                            "name": "vboxcontainer",
+                                            "env": [
+                                                {
+                                                    "name": "vmname",
+                                                    "value": cookies.get('resvm')
+                                                },
+                                                {
+                                                    "name": "remote",
+                                                    "value": cookies.get('remote')
+                                                }
+                                            ],
+                                            "ports": [
+                                                {
+                                                    "containerPort": 5091,
+                                                }
+                                            ],
+                                            "securityContext": {
+                                                "privileged": true
+                                            },
+                                            "volumeMounts": [
+                                                {
+                                                    "mountPath": "dev/vboxdrv",
+                                                    "name": "driver"
+                                                },
+                                                {
+                                                    "mountPath": "sys/fs/cgroup",
+                                                    "name": "cgroup"
+                                                },
+                                                {
+                                                    "mountPath": "machines",
+                                                    "name": "machines"
+                                                }
+                                            ]
                                         }
                                     ],
-                                    "ports": [
+                                    "volumes": [
                                         {
-                                            "containerPort": 3389
-                                        }
-                                    ],
-                                    "securityContext": {
-                                        "privileged": true
-                                    },
-                                    "volumeMounts": [
-                                        {
-                                            "mountPath": "dev/vboxdrv",
-                                            "name": "driver"
+                                            "name": "driver",
+                                            "hostPath": {
+                                                "path": "/dev/vboxdrv"
+                                            }
                                         },
                                         {
-                                            "mountPath": "sys/fs/cgroup",
-                                            "name": "cgroup"
+                                            "name": "cgroup",
+                                            "hostPath": {
+                                                "path": "/sys/fs/cgroup"
+                                            }
                                         },
                                         {
-                                            "mountPath": "machines",
-                                            "name": "machines"
+                                            "name": "machines",
+                                            "hostPath": {
+                                                "path": "/home/leander/machines"
+                                            }
                                         }
                                     ]
                                 }
-                            ],
-                            "volumes": [
-                                {
-                                    "name": "driver",
-                                    "hostPath": {
-                                        "path": "/dev/vboxdrv"
-                                    }
-                                },
-                                {
-                                    "name": "cgroup",
-                                    "hostPath": {
-                                        "path": "/sys/fs/cgroup"
-                                    }
-                                },
-                                {
-                                    "name": "machines",
-                                    "hostPath": {
-                                        "path": "/home/leander/machines"
-                                    }
-                                }
-                            ]
+                            }
                         }
                     }
 
 
+
             this.setState({loading: true});
                 await axios.post(
-                    'http://localhost:8080/api/v1/namespaces/default/pods',
+                    'http://localhost:8080/apis/apps/v1/namespaces/default/deployments',
                     jsondata,
                     {
                         headers: {'Content-Type':'application/json'}})
@@ -237,7 +237,7 @@ class Mainpage extends React.Component {
                     headers: {'Content-Type':'application/json'}})
                 .then(async (res) =>
                 {
-                    cookies.set('ip', res.data.status.podIP + ":3389");
+                    cookies.set('ip', res.data.status.podIP);
                     if (this.state.remote ===  "Oracle VM VirtualBox Extension Pack") {
                         remotetext = "RDP"
                         cookies.set ('remote', remotetext)
@@ -319,6 +319,7 @@ class Mainpage extends React.Component {
                         <CssBaseline/>
                         <form className={classes.form} noValidate>
                             <FormHelperText>Virtuelle Maschine auswählen</FormHelperText>
+
                             <Select
                                 className={classes.select}
                                 id="vm"
@@ -326,10 +327,12 @@ class Mainpage extends React.Component {
                                 onChange={this.handleChangeVM}
                                 displayEmpty
                             >
-                                {vmlist.map((vm, index) =>
-                                <MenuItem key={index} value={vm}>{vm}</MenuItem>
+                                {vm_info.map((vm, index) =>
+                                <MenuItem key={index} value={vm[0]}>{vm[0]} | {vm[3]}</MenuItem>
                                 )}
                             </Select>
+
+
                             <FormLabel component="legend">Verbindungsprotokoll</FormLabel>
                             <RadioGroup className={classes.select} aria-label="Remote Protocol" name="remote"
                                         value={this.state.remote} onChange={this.handleChangeRemote}>
