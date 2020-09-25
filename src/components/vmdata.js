@@ -147,7 +147,7 @@ class VmData extends React.Component {
 
                                     <ListItem>
                                     <ListItemText
-                                        primary={<a href={"http://"+ this.props.ip + ":5091/vnc.html?host=" + this.props.ip + "&port=5901"}>nice</a>}
+                                        primary={<a href={"http://localhost:"+ this.props.ip+"/vnc.html" } target="_blank" rel="noopener noreferrer">{"http://localhost:"+ this.props.ip+"/vnc.html" }</a>}
                                         secondary='IP-Adresse'
                                     />
                                 </ListItem>

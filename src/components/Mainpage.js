@@ -111,7 +111,7 @@ class Mainpage extends React.Component {
         let resvm = cookies.get('resvm');
 
         if (session === undefined){
-            let uservm =  username();
+            let uservm =  'x'+username();
             cookies.set('sessioncookie', uservm);
             this.setState({session: uservm})
         }
@@ -231,7 +231,7 @@ class Mainpage extends React.Component {
                     "apiVersion": "v1",
                     "kind": "Service",
                     "metadata": {
-                        "name": cookies.get('sessioncookie') +"service"
+                        "name": cookies.get('sessioncookie') +"-service"
                     },
                     "spec": {
                         "type": "NodePort",
@@ -261,13 +261,14 @@ class Mainpage extends React.Component {
                     headers: {'Content-Type':'application/json'}})
                 .then(async (res) =>
                 {
-                    cookies.set('ip', res.data.status.podIP);
+
                     axios.post('http://localhost:8080/api/v1/namespaces/default/services',
                         jsonservice,
                         {
                             headers: {'Content-Type':'application/json'}})
                         .then(async (res) =>
-                        {console.log(res)})
+                        { console.log(res);
+                            cookies.set('ip', res.data.spec.ports[0].nodePort)})
                         .catch(function (error) {
                             console.log(error);
                         })
