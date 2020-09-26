@@ -1,13 +1,12 @@
 import React from 'react'
-import vm_info from "./vminfo";
+import vm_info from "./vm_info";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import Container from "@material-ui/core/Container";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Helpdrawer from "./helpdrawer";
+import Helpdrawer from "./functions/helpdrawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import logo from "../logo.png"
@@ -15,11 +14,11 @@ import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
-import LinearIndeterminate from "./Loading";
+import LinearIndeterminate from "./functions/Loading";
 import VmData from "./vmdata";
 import { Cookies } from 'react-cookie';
 import Typography from "@material-ui/core/Typography";
-import Timer from "./timer";
+import Timer from "./functions/timer";
 const axios = require('axios');
 
 const cookies = new Cookies();
@@ -69,7 +68,7 @@ const styles = props  => ({
         marginBottom: '1em'
     },
     tooltip: {
-        color: 'violet',
+        color: 'orange',
         flexDirection: 'column',
         alignItems: 'center',
         display: 'flex',
@@ -390,7 +389,7 @@ class Mainpage extends React.Component {
                 <AppBar position="static">
                     <Toolbar className={classes.toolbar}>
                         <div className={classes.title}><img src={logo} width={'120em'} alt={"dynvirt"}/></div>
-                       <Typography variant={"subtitle"}>{'version 0.6 beta'}</Typography>
+                       <Typography variant={"subtitle2"}>{'version 0.6 beta'}</Typography>
                     </Toolbar>
                 </AppBar>
             <Container component="main" maxWidth="xs" >
@@ -408,7 +407,7 @@ class Mainpage extends React.Component {
                     <div className={classes.paper}>
                         <CssBaseline/>
                         <form className={classes.form} noValidate>
-                            <FormHelperText>Virtuelle Maschine auswählen</FormHelperText>
+                            <FormLabel>Virtuelle Maschine auswählen</FormLabel>
 
                             <Select
                                 className={classes.select}
@@ -418,7 +417,7 @@ class Mainpage extends React.Component {
                                 displayEmpty
                             >
                                 {vm_info.map((vm, index) =>
-                                <MenuItem key={index} value={vm[0]}>{vm[0]} {vm[3]}</MenuItem>
+                                <MenuItem key={index} value={vm[0]}>{vm[0]}</MenuItem>
                                 )}
                             </Select>
 
@@ -454,17 +453,3 @@ class Mainpage extends React.Component {
 }
 
 export default withStyles(styles)(Mainpage);
-
-//apiVersion: v1
-// kind: Service
-// metadata:
-//   name: my-service
-// spec:
-//   selector:
-//     app: cookies.get('sessioncookie')
-//   ports:
-//     - protocol: TCP
-//       port: 81
-//       targetPort: 5091
-
-// get all services, take newest, add port +1

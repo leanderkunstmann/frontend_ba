@@ -38,7 +38,9 @@ export default function Helpdrawer() {
                 <DialogTitle id="alert-dialog-slide-title">{"Hinweise & Tipps"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
-                        Hier könnten Hinweise und Tipps stehen.
+                        VNC unterstützt sowohl Verbindungen vom lokalen Desktop als auch über das eingebaute Webinterface.<br/>
+                        Eingeschränkte Mausintegration bedeutet, dass die Maus über Fernzugriff nicht 1 zu 1 übertragen wird, aufgrund der Unterschiedlichen Schnittstellen über die Jahre.
+
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

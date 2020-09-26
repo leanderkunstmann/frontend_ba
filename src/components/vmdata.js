@@ -1,5 +1,5 @@
 import React from "react";
-import vm_info from "./vminfo";
+import vm_info from "./vm_info";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
@@ -8,8 +8,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { Cookies } from 'react-cookie';
 import Button from "@material-ui/core/Button";
-import LinearIndeterminate from "./Loading";
-import Clock from "./clock";
+import LinearIndeterminate from "./functions/Loading";
+import Clock from "./functions/clock";
 const axios = require('axios');
 
 
@@ -83,6 +83,21 @@ class VmData extends React.Component {
                             this.setState({errorMessage: 'Es ist etwas schiefgelaufen'})
                         }
                     })
+                await axios.delete('http://localhost:8080/api/v1/namespaces/default/services/' + this.state.session +"-service-remote")
+                    .then(async (response) => {
+                        deleteCookies(cookies.getAll());
+                        window.location.reload(false);
+                    })
+                    .catch(function (error) {
+                        if (error.response.status === 404) {
+                            deleteCookies(cookies.getAll());
+                            window.location.reload(false);
+                            console.log(error);
+                        }
+                        else{
+                            this.setState({errorMessage: 'Es ist etwas schiefgelaufen'})
+                        }
+                    })
             })
             .catch(function (error) {
                 if (error.response.status === 404) {
@@ -97,17 +112,14 @@ class VmData extends React.Component {
 
 
     async handleStatus () {
-        await axios.get('http://localhost:8080/api/v1/namespaces/default/deployments/' + this.state.session)
+         axios.get('http://localhost:8080/apis/apps/v1/namespaces/default/deployments/' + this.state.session)
             .then(async (response) => {
-                console.log(response)
                 this.setState({successMessage: "Status: Instanz ist online"})
             })
-            .catch(function (error) {
-                console.log(error)
+            .catch(async (error) => {
                 this.setState({errorMessage: "Status: Instanz ist offline"})
                 }
-             )
-            .then()
+            )
     }
 
     render() {

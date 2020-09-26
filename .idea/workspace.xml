@@ -20,12 +20,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5985657c-f933-46c6-bd81-2e1448651a70" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/clock.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/timer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/vm_info.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Loading.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/Loading.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Mainpage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/clock.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/clock.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/helpdrawer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/helpdrawer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/timer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/timer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/vmdata.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/vmdata.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/vminfo.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/vminfo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/vminfo.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,21 +73,25 @@
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\IntelliJ IDEA 2019.3\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\benni\IdeaProjects\frontend_ba\src" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\benni\IdeaProjects\frontend_ba\public" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components" />
+      <recent name="$PROJECT_DIR$/src/components/functions" />
+      <recent name="C:\Users\benni\IdeaProjects\frontend_ba\src" />
+    </key>
   </component>
   <component name="RunManager" selected="npm.npm start">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -137,6 +144,7 @@
       <workItem from="1601042896034" duration="10172000" />
       <workItem from="1601065731805" duration="5712000" />
       <workItem from="1601127846606" duration="10115000" />
+      <workItem from="1601144496441" duration="4837000" />
     </task>
     <task id="LOCAL-00001" summary="first version with session storage">
       <created>1598102220183</created>
