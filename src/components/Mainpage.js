@@ -19,6 +19,7 @@ import LinearIndeterminate from "./Loading";
 import VmData from "./vmdata";
 import { Cookies } from 'react-cookie';
 import Typography from "@material-ui/core/Typography";
+import Timer from "./timer";
 const axios = require('axios');
 
 const cookies = new Cookies();
@@ -44,6 +45,7 @@ function fuehrendeNull(zahl) {
     zahl = (zahl < 10 ? '0' : '' )+ zahl;
     return zahl;
 }
+let remotetext;
 
 
 const styles = props  => ({
@@ -66,12 +68,19 @@ const styles = props  => ({
         display: 'flex',
         marginBottom: '1em'
     },
+    tooltip: {
+        color: 'violet',
+        flexDirection: 'column',
+        alignItems: 'center',
+        display: 'flex',
+        marginBottom: '1em'
+    },
     select:{
         width:'100%',
         marginBottom: '2em'
     },
     paper: {
-        marginTop:'6em',
+        marginTop:'4em',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -87,7 +96,7 @@ const styles = props  => ({
         margin: '100em',
     },
 });
-let remotetext;
+
 class Mainpage extends React.Component {
 
     constructor(props) {
@@ -135,7 +144,6 @@ class Mainpage extends React.Component {
 
 
                 let jsondata =
-
                     {
                         "apiVersion": "apps/v1",
                         "kind": "Deployment",
@@ -227,7 +235,7 @@ class Mainpage extends React.Component {
                         }
                     }
 
-                let jsonservice ={
+                let jsonservice_vnc ={
                     "apiVersion": "v1",
                     "kind": "Service",
                     "metadata": {
@@ -247,7 +255,35 @@ class Mainpage extends React.Component {
                         ]
                     }
                 }
+                let jsonservice_remote ={
+                    "apiVersion": "v1",
+                    "kind": "Service",
+                    "metadata": {
+                        "name": cookies.get('sessioncookie') +"-service-remote"
+                    },
+                    "spec": {
+                        "type": "NodePort",
+                        "selector": {
+                            "app": cookies.get('sessioncookie')
+                        },
+                        "ports": [
+                            {
+                                "protocol": "TCP",
+                                "port": 82,
+                                "targetPort": 3389
+                            }
+                        ]
+                    }
+                }
 
+                for (let i of vm_info) {
+                    if (i[0] === this.state.vm) {
+                        console.log('timeofvm: ' + i[5]);
+                        let timeneeded = i[5] * 0.04
+                        console.log('timeofvm2: ' + timeneeded);
+                        this.setState({time: timeneeded})
+                    }
+                }
             this.setState({loading: true});
                 await axios.post(
                     'http://localhost:8080/apis/apps/v1/namespaces/default/deployments',
@@ -255,20 +291,42 @@ class Mainpage extends React.Component {
                     {
                         headers: {'Content-Type':'application/json'}})
             .then(async (response) => {
-                await Sleep (10000)
+                for (let i of vm_info) {
+                    if (i[0] === this.state.vm) {
+                        console.log('timeofvm: ' + i[5]);
+                        let timeneeded = i[5] * 0.04
+                        console.log('timeofvm2: ' + timeneeded);
+                        this.setState({time: timeneeded})
+                    }
+                }
+                await Sleep ((this.state.time*1000)-1000)
+
                     console.log(response);
                 axios.get('http://localhost:8080/apis/apps/v1/namespaces/default/deployments/'+cookies.get('sessioncookie'),{
                     headers: {'Content-Type':'application/json'}})
-                .then(async (res) =>
-                {
-
+                .then(async (res) => {
+                    if (this.state.remote === 'VNC'){
+                        axios.post('http://localhost:8080/api/v1/namespaces/default/services',
+                            jsonservice_vnc,
+                            {
+                                headers: {'Content-Type': 'application/json'}
+                            })
+                            .then(async (res) => {
+                                cookies.set('port_vnc', res.data.spec.ports[0].nodePort)
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    }
                     axios.post('http://localhost:8080/api/v1/namespaces/default/services',
-                        jsonservice,
+                        jsonservice_remote,
                         {
-                            headers: {'Content-Type':'application/json'}})
-                        .then(async (res) =>
-                        { console.log(res);
-                            cookies.set('ip', res.data.spec.ports[0].nodePort)})
+                            headers: {'Content-Type': 'application/json'}
+                        })
+                        .then(async (res) => {
+                            console.log(res);
+                            cookies.set('ip', res.data.spec.ports[0].nodePort)
+                        })
                         .catch(function (error) {
                             console.log(error);
                         })
@@ -286,15 +344,6 @@ class Mainpage extends React.Component {
                     this.setState(this.state)
                     console.log(res);
                                     })
-                //et wsurl = 'ws://localhost:8080/api/v1/namespaces/default/pods/'+cookies.get('sessioncookie')+'/exec?command=echo&command=foo&stderr=true&stdout=true'
-                    //'command=.%2Frun.sh&stderr=true&stdout=true'
-                //"ws://localhost:8080/api/v1/namespaces/default/pods/ehvr4f6m1xqrfgjdvmvz/exec?container=vboxcontainer&stdin=1&stdout=1&stderr=1&tty=1&command=%2Fbin%2Fbash"
-
-                //let sock = new WebSocket(wsurl);
-                //sock.onopen = () => {
-                    // on connecting, do nothing but log it to the console
-                   // console.log('connected'}
-                //sock.onclose = function (event) { console.log('close')}
 
 
 
@@ -329,24 +378,31 @@ class Mainpage extends React.Component {
     render() {
         console.log(this.state);
         const {classes} = this.props;
-
+        let tooltip;
+        for (let i of vm_info) {
+            if (i[0] === this.state.vm)
+            {
+                tooltip = i[3];
+            }
+        }
         return (
             <div className={classes.main}>
                 <AppBar position="static">
                     <Toolbar className={classes.toolbar}>
                         <div className={classes.title}><img src={logo} width={'120em'} alt={"dynvirt"}/></div>
-                       <Typography variant={"subtitle"}>{'version 0.3 alpha'}</Typography>
+                       <Typography variant={"subtitle"}>{'version 0.6 beta'}</Typography>
                     </Toolbar>
                 </AppBar>
             <Container component="main" maxWidth="xs" >
                 {this.state.loading ?
                     <div className={classes.paper}>
                 <LinearIndeterminate/>
+                <Timer time={this.state.time} />
                     </div>
                 :
                 this.state.done ?
                     <div className={classes.paper}>
-                        <VmData time={this.state.time} remote={remotetext} vm={this.state.vm} ip={this.state.ip}/>
+                        <VmData remote={remotetext} vm={this.state.vm} ip={this.state.ip}/>
                     </div>
                     :
                     <div className={classes.paper}>
@@ -362,7 +418,7 @@ class Mainpage extends React.Component {
                                 displayEmpty
                             >
                                 {vm_info.map((vm, index) =>
-                                <MenuItem key={index} value={vm[0]}>{vm[0]} | {vm[3]}</MenuItem>
+                                <MenuItem key={index} value={vm[0]}>{vm[0]} {vm[3]}</MenuItem>
                                 )}
                             </Select>
 
@@ -374,6 +430,10 @@ class Mainpage extends React.Component {
                                 <FormControlLabel value="VNC" control={<Radio/>}
                                                   label="Virtual Network Computing (VNC)"/>
                             </RadioGroup>
+
+                            <div>
+                                <Typography className={classes.tooltip}>{tooltip}</Typography>
+                            </div>
 
                             <Typography className={classes.errormsg}>{this.state.errormsg}</Typography>
                             <Button variant="outlined"

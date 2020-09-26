@@ -1,23 +1,24 @@
 const vm_info = [
-    ['HAL91', 'nicht benötigt','',''],
-    ['OpenBSD 6.5 (Fvwm)','root','BSDtoor','tooltip'],
-    ['OPENSTEP 4.2','nicht benötigt','','tooltip'],
-    ['OS2 1.30 (Microsoft)','nicht benötigt','','tooltip'],
-    ['OS2-W4','nicht benötigt','','tooltip'],
-    ['ReactOS 0.4.9','nicht benötigt','','tooltip'],
-    ['sol-11_4-vbox','Username','Passwort','tooltip'],
-    ['TrueOS 18.12 stable (Mate)','root','TRUEtoor','tooltip'],
-    ['Unix System V R4','Username','Passwort','tooltip'],
-    ['Win NT 3.51','Administrator','admin',''],
-    ['Win NT 4 (clean)','Administrator','admin',''],
-    ['WIN3.1 (SND, SVGA, NET)','Administrator','admin','tooltip'],
-    ['Xenix 386 2.3.4q','Username','Passwort','tooltip'],
-    ['CPM-86 1.1','Username','Passwort','tooltip'],
-    ['DilOS','Username','Passwort','tooltip'],
-    ['DOS_2.10','Username','Passwort','tooltip'],
-    ['DOS_3.30 Win2','Username','Passwort','tooltip'],
-    ['DOS_622-Win311','Username','Passwort','tooltip'],
-    ['DR_DOS8','Username','Passwort','tooltip'],
+  //['name','username','password','tooltip1','tooltip2',vmsize_in_mb]
+    ['HAL91', '--','--','','',2],
+    ['OpenBSD 6.5 (Fvwm)','root','BSDtoor','tooltip1','tooltip2',553],
+    ['OPENSTEP 4.2','--','','tooltip1','tooltip2',133],
+    ['OS2 1.30 (Microsoft)','--','','tooltip1','tooltip2',6],
+    ['OS2-W4','--','','tooltip1','tooltip2',95],
+    ['ReactOS 0.4.9','--','','tooltip1','tooltip2',178],
+    ['sol-11_4-vbox','root','admin1','tooltip1','tooltip2',3450],
+    ['TrueOS 18.12 stable (Mate)','root','TRUEtoor','tooltip1','tooltip2',3650],
+    ['Unix System V R4','Username','Passwort','tooltip1','tooltip2',14],
+    ['Win NT 3.51','Administrator','admin','','',26],
+    ['Win NT 4 (clean)','Administrator','admin','','',340],
+    ['WIN3.1 (SND, SVGA, NET)','Administrator','admin','tooltip1','tooltip2',12],
+    ['Xenix 386 2.3.4q','Username','Passwort','tooltip1','tooltip2',8],
+    ['CPM-86 1.1','Username','Passwort','tooltip1','tooltip2',1],
+    ['DilOS','root','DILOStoor','tooltip1','tooltip2',765],
+    ['DOS_2.10','Username','Passwort','tooltip1','tooltip2',1],
+    ['DOS_3.30 Win2','Username','Passwort','tooltip1','tooltip2',2],
+    ['DOS_622-Win311','Username','Passwort','tooltip1','tooltip2',45],
+    ['DR-DOS8','Username','Passwort','tooltip1','tooltip2',3],
 ];
 
 export default vm_info;
@@ -51,6 +52,6 @@ export default vm_info;
 //
 //
 //
-//
-//
+//2.40 für 3.4gb 21,3mb/s
+//0.28 für 760mb 27,3mb/s
 

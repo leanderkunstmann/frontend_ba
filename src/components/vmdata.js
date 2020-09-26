@@ -9,6 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { Cookies } from 'react-cookie';
 import Button from "@material-ui/core/Button";
 import LinearIndeterminate from "./Loading";
+import Clock from "./clock";
 const axios = require('axios');
 
 
@@ -39,7 +40,6 @@ class VmData extends React.Component {
         this.state = {
             session: cookies.get('sessioncookie'),
             vm: cookies.get('resvm'),
-            time: cookies.get('time'),
             ip: cookies.get('ip'),
             remote: cookies.get('remote'),
             errorMessage: null,
@@ -68,24 +68,33 @@ class VmData extends React.Component {
     async handleSubmit () {
         await axios.delete('http://localhost:8080/apis/apps/v1/namespaces/default/deployments/' + this.state.session)
             .then(async (response) => {
-                console.log(response)
-                deleteCookies(cookies.getAll());
-                window.location.reload(false);
+                await axios.delete('http://localhost:8080/api/v1/namespaces/default/services/' + this.state.session +"-service")
+                    .then(async (response) => {
+                        deleteCookies(cookies.getAll());
+                        window.location.reload(false);
+                    })
+                    .catch(function (error) {
+                        if (error.response.status === 404) {
+                            deleteCookies(cookies.getAll());
+                            window.location.reload(false);
+                            console.log(error);
+                        }
+                        else{
+                            this.setState({errorMessage: 'Es ist etwas schiefgelaufen'})
+                        }
+                    })
             })
             .catch(function (error) {
-                console.log(error.response.status)
                 if (error.response.status === 404) {
-                    console.log("Pod nicht da")
                     deleteCookies(cookies.getAll());
                     window.location.reload(false);
-                    console.log(error);
                 }
-            } )
-            .then()
-    }
+                else{
+                    this.setState({errorMessage: 'Es ist etwas schiefgelaufen'})
+                }
+                })
+            }
 
-    componentDidMount() {
-    }
 
     async handleStatus () {
         await axios.get('http://localhost:8080/api/v1/namespaces/default/deployments/' + this.state.session)
@@ -105,8 +114,10 @@ class VmData extends React.Component {
         let vm_info_specified = []
         for (let i of vm_info) {
             if (i[0] === this.state.vm)
+            {
                 console.log('match')
             vm_info_specified.push(i[1],i[2],i[3])
+            }
         }
         console.log(this.state)
         const {classes} = this.props;
@@ -115,13 +126,11 @@ class VmData extends React.Component {
             <div>
                 <br/>
                 <Typography style={{display: 'flex', justifyContent: 'center'}} variant="h6" component="h5">
-                    Session / Sitzung
-                </Typography>
-                <Typography style={{display: 'flex', justifyContent: 'center'}} variant="h6" component="h5">
                     {this.state.session}
                 </Typography>
+                <Clock style={{display: 'flex', justifyContent: 'center'}}/>
 
-                <Grid style={{display: 'flex', justifyContent: 'center'}} container spacing={4}>
+                <Grid style={{display: 'flex', justifyContent: 'center'}}  container spacing={5}>
                     <Grid item xs={12} md={12}>
                         {this.state.loading ? <LinearIndeterminate/> :
                         <div className={classes.element}>
@@ -145,12 +154,33 @@ class VmData extends React.Component {
                                     />
                                 </ListItem>
 
-                                    <ListItem>
-                                    <ListItemText
-                                        primary={<a href={"http://localhost:"+ this.props.ip+"/vnc.html" } target="_blank" rel="noopener noreferrer">{"http://localhost:"+ this.props.ip+"/vnc.html" }</a>}
-                                        secondary='IP-Adresse'
-                                    />
-                                </ListItem>
+                                <div>
+                                    {this.state.remote === "VNC (Password = secret)"
+                                        ?
+                                        <div>
+                                            <ListItem>
+                                                <ListItemText
+                                                    primary={<a href={"http://localhost:"+ cookies.get('port_vnc')+"/vnc.html" } target="_blank" rel="noopener noreferrer">{"http://localhost:"+ cookies.get('port_vnc')+"/vnc.html" }</a>}
+                                                    secondary={'VNC-Webzugriff'}
+                                                />
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText
+                                                    primary={"http://localhost:"+ cookies.get('ip')}
+                                                    secondary={'VNC-Fernzugriff'}
+                                                />
+                                            </ListItem>
+                                        </div>
+                                        :
+                                        <ListItem>
+                                            <ListItemText
+                                                primary={"http://localhost:"+ cookies.get('ip')}
+                                                secondary='RDP-Fernzugriff'
+                                            />
+                                        </ListItem>
+                                    }
+                                </div>
+
 
 
                             </List>
