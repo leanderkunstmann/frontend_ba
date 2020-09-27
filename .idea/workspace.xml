@@ -20,15 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5985657c-f933-46c6-bd81-2e1448651a70" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/vm_info.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Loading.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/Loading.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Mainpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Mainpage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/clock.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/clock.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/helpdrawer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/helpdrawer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/timer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/functions/timer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/vmdata.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/vmdata.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/vminfo.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +136,7 @@
       <workItem from="1601042896034" duration="10172000" />
       <workItem from="1601065731805" duration="5712000" />
       <workItem from="1601127846606" duration="10115000" />
-      <workItem from="1601144496441" duration="4837000" />
+      <workItem from="1601144496441" duration="6160000" />
     </task>
     <task id="LOCAL-00001" summary="first version with session storage">
       <created>1598102220183</created>
