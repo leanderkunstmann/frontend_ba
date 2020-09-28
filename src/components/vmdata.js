@@ -64,7 +64,7 @@ class VmData extends React.Component {
 
     }
 
-
+// Löschen der VM wird provisionert
     async handleSubmit () {
         await axios.delete('http://localhost:8080/apis/apps/v1/namespaces/default/deployments/' + this.state.session)
             .then(async (response) => {
@@ -74,6 +74,7 @@ class VmData extends React.Component {
                         window.location.reload(false);
                     })
                     .catch(function (error) {
+                      try {
                         if (error.response.status === 404) {
                             deleteCookies(cookies.getAll());
                             window.location.reload(false);
@@ -82,6 +83,11 @@ class VmData extends React.Component {
                         else{
                             this.setState({errorMessage: 'Es ist etwas schiefgelaufen'})
                         }
+
+                      } catch (e) {
+
+                      }
+
                     })
                 await axios.delete('http://localhost:8080/api/v1/namespaces/default/services/' + this.state.session +"-service-remote")
                     .then(async (response) => {
@@ -89,6 +95,7 @@ class VmData extends React.Component {
                         window.location.reload(false);
                     })
                     .catch(function (error) {
+                      try {
                         if (error.response.status === 404) {
                             deleteCookies(cookies.getAll());
                             window.location.reload(false);
@@ -97,20 +104,30 @@ class VmData extends React.Component {
                         else{
                             this.setState({errorMessage: 'Es ist etwas schiefgelaufen'})
                         }
+
+                      } catch (e) {
+
+                      }
                     })
             })
             .catch(function (error) {
+              try {
                 if (error.response.status === 404) {
                     deleteCookies(cookies.getAll());
                     window.location.reload(false);
+                    console.log(error);
                 }
                 else{
                     this.setState({errorMessage: 'Es ist etwas schiefgelaufen'})
                 }
+
+              } catch (e) {
+
+              } 
                 })
             }
 
-
+//Statuscheck
     async handleStatus () {
          axios.get('http://localhost:8080/apis/apps/v1/namespaces/default/deployments/' + this.state.session)
             .then(async (response) => {
@@ -232,4 +249,3 @@ class VmData extends React.Component {
 
 
 export default withStyles(styles)(VmData);
-

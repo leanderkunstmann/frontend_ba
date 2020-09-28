@@ -20,8 +20,12 @@ import { Cookies } from 'react-cookie';
 import Typography from "@material-ui/core/Typography";
 import Timer from "./functions/timer";
 const axios = require('axios');
-
 const cookies = new Cookies();
+
+
+const hostname = "dynvirt";
+
+
 
 function username() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -68,7 +72,7 @@ const styles = props  => ({
         marginBottom: '1em'
     },
     tooltip: {
-        color: 'orange',
+        color: 'blue',
         flexDirection: 'column',
         alignItems: 'center',
         display: 'flex',
@@ -96,6 +100,7 @@ const styles = props  => ({
     },
 });
 
+//Klasse, die die SPA aufbaut und entscheidet, welche Ansicht angezeigt werden muss/soll
 class Mainpage extends React.Component {
 
     constructor(props) {
@@ -112,6 +117,7 @@ class Mainpage extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         }
 
+//Cookies werden gesetzt (Session wird definiert)
         componentDidMount() {
         const cookies = new Cookies();
 
@@ -119,6 +125,7 @@ class Mainpage extends React.Component {
         let resvm = cookies.get('resvm');
 
         if (session === undefined){
+          //x muss vor den username/sessioname, da Kubernetes Objekte mit Buchstaben beginnen müssen
             let uservm =  'x'+username();
             cookies.set('sessioncookie', uservm);
             this.setState({session: uservm})
@@ -130,7 +137,7 @@ class Mainpage extends React.Component {
                 this.setState({done: true, ip: cookies.get('ip'), remote: cookies.get('remote')})
             }
         }
-
+// Handling der Provisionierung
     async handleSubmit () {
             console.log(this.state)
             if(this.state.vm ==="" || this.state.remote ===""){
@@ -141,7 +148,7 @@ class Mainpage extends React.Component {
             cookies.set('time', uhrzeit());
             cookies.set('remote', this.state.remote);
 
-
+//Deployment Config als JSON
                 let jsondata =
                     {
                         "apiVersion": "apps/v1",
@@ -225,7 +232,7 @@ class Mainpage extends React.Component {
                                         {
                                             "name": "machines",
                                             "hostPath": {
-                                                "path": "/home/leander/machines"
+                                                "path": "/home/"+hostname +"/machines"
                                             }
                                         }
                                     ]
@@ -233,7 +240,7 @@ class Mainpage extends React.Component {
                             }
                         }
                     }
-
+//VNC-Webservice Service Json
                 let jsonservice_vnc ={
                     "apiVersion": "v1",
                     "kind": "Service",
@@ -254,6 +261,8 @@ class Mainpage extends React.Component {
                         ]
                     }
                 }
+
+//Remote (VNC oder RDP) Service Json
                 let jsonservice_remote ={
                     "apiVersion": "v1",
                     "kind": "Service",
@@ -274,7 +283,7 @@ class Mainpage extends React.Component {
                         ]
                     }
                 }
-
+//Berechnung der Zeitdauer für die Bereitstellung: 25mb/s Importgeschwindigkeit wurde gemessen
                 for (let i of vm_info) {
                     if (i[0] === this.state.vm) {
                         console.log('timeofvm: ' + i[5]);
@@ -283,6 +292,7 @@ class Mainpage extends React.Component {
                         this.setState({time: timeneeded})
                     }
                 }
+//Ladebildschirm beginnt und Provisionierung wird via API-Requests gegen die Kubernetes-API gestartet
             this.setState({loading: true});
                 await axios.post(
                     'http://localhost:8080/apis/apps/v1/namespaces/default/deployments',
@@ -373,7 +383,7 @@ class Mainpage extends React.Component {
     }
 
 
-
+//Frontend wird gerendert
     render() {
         console.log(this.state);
         const {classes} = this.props;
@@ -389,7 +399,7 @@ class Mainpage extends React.Component {
                 <AppBar position="static">
                     <Toolbar className={classes.toolbar}>
                         <div className={classes.title}><img src={logo} width={'120em'} alt={"dynvirt"}/></div>
-                       <Typography variant={"subtitle2"}>{'version 0.6 beta'}</Typography>
+                       <Typography variant={"subtitle2"}>{'v1.0/prototype'}</Typography>
                     </Toolbar>
                 </AppBar>
             <Container component="main" maxWidth="xs" >
@@ -400,6 +410,7 @@ class Mainpage extends React.Component {
                     </div>
                 :
                 this.state.done ?
+              //VmData = Übersichtsbildschirm, der angezeigt wird, wenn VM provisioniert wurde.
                     <div className={classes.paper}>
                         <VmData remote={remotetext} vm={this.state.vm} ip={this.state.ip}/>
                     </div>
