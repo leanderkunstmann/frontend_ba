@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This React-based Project is the Frontend for an application, which provides dynamic provisioning to remotely accessable virtually machines via Kubernetes API
 
 ## Available Scripts
 
